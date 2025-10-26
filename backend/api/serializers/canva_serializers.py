@@ -1,16 +1,12 @@
-import rest_framework as serializers
-from django.contrib.auth.models import User
-from ..models import Canva
+from rest_framework import serializers
+from ..models import Canva, User
 
 
 class CanvaSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), read_only=True
-    )
     class Meta:
         model = Canva
-        fields = ["user", "name", "is_collaborative", "created_at", "updated_at"]
-        read_only_fields = ["user", "created_at", "updated_at"]
+        fields = ["id", "name", "is_collaborative", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at"]
 
 
 class CanvaCreateSerializer(serializers.ModelSerializer):
@@ -26,4 +22,4 @@ class CanvaCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canva
-        fields = ["user", "name", "is_collaborative"]
+        fields = ["name", "is_collaborative"]
