@@ -1,10 +1,10 @@
 import rest_framework as serializers
-from ..models import Block
+from ..models import Block, Canva
 
 
 class BlockSerializer(serializers.ModelSerializer):
     canva = serializers.PrimaryKeyRelatedField(
-        queryset=Block.objects.all(), read_only=True
+        queryset=Canva.objects.all(), read_only=True
     )
 
     class Meta:

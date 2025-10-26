@@ -1,11 +1,12 @@
 import rest_framework as serializers
-from ..models import Task
+from ..models import Task, Block
 
 
 class TaskSerializer(serializers.ModelSerializer):
     block = serializers.PrimaryKeyRelatedField(
-        queryset=Task.objects.all(), read_only=True
+        queryset=Block.objects.all(), read_only=True
     )
+
     class Meta:
         model = Task
         depth = 1
