@@ -1,9 +1,13 @@
-from rest_framework import status
+from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import authenticate
-from ..serializers.user_serializers import UserSerializer
+from ..serializers.user_serializers import (
+    UserUpdateSerializer,
+    UserUpdatePasswordSerializer,
+)
 from ..models import User
 
 
@@ -15,7 +19,7 @@ class AuthView(APIView):
 
         if not email or not password:
             return Response(
-                {"error": "email et password sont obligatoires."},
+                {"error": "email and password sont obligatoires."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user = authenticate(request, username=email, password=password)
@@ -46,3 +50,39 @@ class AuthView(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+class ValidationActivateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserUpdateSerializer
+    lookup_field = "id"
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.is_validated = True
+        user.save()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PasswordPatchView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserUpdatePasswordSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+                
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Mot de passe mis à jour avec succès."},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
