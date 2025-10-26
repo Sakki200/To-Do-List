@@ -15,7 +15,6 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    token = models.CharField(max_length=150, unique=True )
     email = models.EmailField(max_length=150, unique=True)
     is_validated = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
