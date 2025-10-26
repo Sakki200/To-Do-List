@@ -1,15 +1,31 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import uuid
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError("Email must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-class User(models.Model):
+
+class User(AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     token = models.CharField(max_length=150, unique=True )
-    email = models.CharField(max_length=150, unique=True)
-    password = models.CharField(max_length=150)
+    email = models.EmailField(max_length=150, unique=True)
     is_validated = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = "email"
+    EMAIL_FIELD = "email"
+    REQUIRED_FIELDS = []
 
     class Meta:
         db_table = "user"
@@ -20,7 +36,7 @@ class User(models.Model):
 
 class Canva(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="canvas")
     name = models.CharField(max_length=150)
     is_collaborative = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -35,7 +51,7 @@ class Canva(models.Model):
 
 class Block(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    canva = models.ForeignKey(Canva, on_delete=models.CASCADE)
+    canva = models.ForeignKey(Canva, on_delete=models.CASCADE, related_name="blocks")
     name = models.CharField(max_length=150)
     position_x = models.FloatField()
     position_y = models.FloatField()
@@ -53,7 +69,7 @@ class Block(models.Model):
 
 class Task(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    block = models.ForeignKey(Block, on_delete=models.CASCADE)
+    block = models.ForeignKey(Block, on_delete=models.CASCADE, related_name="tasks")
     description = models.TextField()
     position = models.IntegerField()
     is_checked = models.BooleanField(default=False)
@@ -68,8 +84,8 @@ class Task(models.Model):
 
 class Collaboration(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    canva = models.ForeignKey(Canva, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    canva = models.ForeignKey(Canva, on_delete=models.CASCADE, related_name="collaborators")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="collaborations")
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
@@ -81,7 +97,7 @@ class Collaboration(models.Model):
 class CollaborationInvitation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    canva = models.ForeignKey(Canva, on_delete=models.CASCADE)
+    canva = models.ForeignKey(Canva, on_delete=models.CASCADE, related_name="collaborationInvitations")
     status = models.CharField(max_length=25, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('declined', 'Declined')], default='pending')
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
