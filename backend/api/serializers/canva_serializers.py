@@ -7,7 +7,6 @@ class CanvaSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), read_only=True
     )
-
     class Meta:
         model = Canva
         fields = ["user", "name", "is_collaborative", "created_at", "updated_at"]
