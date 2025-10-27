@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import uuid
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         if not email:
@@ -81,23 +82,22 @@ class Task(models.Model):
         verbose_name = "Task"
         verbose_name_plural = "Tasks"
 
-class Collaboration(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    canva = models.ForeignKey(Canva, on_delete=models.CASCADE, related_name="collaborators")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="collaborations")
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-
-    class Meta:
-        db_table = "collaboration"
-        ordering = ["-canva__updated_at", "-created_at"]
-        verbose_name = "Collaboration"
-        verbose_name_plural = "Collaborations"
 
 class CollaborationInvitation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    canva = models.ForeignKey(Canva, on_delete=models.CASCADE, related_name="collaborationInvitations")
-    status = models.CharField(max_length=25, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('declined', 'Declined')], default='pending')
+    canva = models.ForeignKey(
+        Canva, on_delete=models.CASCADE, related_name="collaborationInvitations"
+    )
+    status = models.CharField(
+        max_length=25,
+        choices=[
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("declined", "Declined"),
+        ],
+        default="pending",
+    )
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
@@ -105,3 +105,20 @@ class CollaborationInvitation(models.Model):
         ordering = ["-created_at"]
         verbose_name = "Collaboration Invitation"
         verbose_name_plural = "Collaboration Invitations"
+
+
+class Collaboration(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    collaboration_invitation = models.OneToOneField(
+        CollaborationInvitation, on_delete=models.CASCADE, related_name="collaborations", null=False, blank=False
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="collaborations"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+
+    class Meta:
+        db_table = "collaboration"
+        ordering = ["-collaboration_invitation__canva__updated_at", "-created_at"]
+        verbose_name = "Collaboration"
+        verbose_name_plural = "Collaborations"
