@@ -1,17 +1,14 @@
-import rest_framework as serializers
-from ..models import Block, Canva
+from rest_framework import serializers
+from .task_serializers import TaskSerializer, TaskCreateSerializer
+from ..models import Block
 
 
 class BlockSerializer(serializers.ModelSerializer):
-    canva = serializers.PrimaryKeyRelatedField(
-        queryset=Canva.objects.all(), read_only=True
-    )
-
     class Meta:
         model = Block
         depth = 1
         fields = [
-            "canva",
+            "id",
             "name",
             "position_x",
             "position_y",
@@ -21,14 +18,13 @@ class BlockSerializer(serializers.ModelSerializer):
             "updated_at",
             "tasks",
         ]
-        read_only_fields = ["canva", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at"]
 
 
 class BlockCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
-        canva = self.context["canva"]
         block = Block.objects.create(
-            canva=canva,
+            canva=validated_data["canva"],
             name=validated_data["name"],
             position_x=validated_data["position_x"],
             position_y=validated_data["position_y"],

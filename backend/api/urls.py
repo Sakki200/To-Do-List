@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import user_views, canva_views
+from .views import user_views, canva_views, block_views
 
 urlpatterns = [
     path("auth/", user_views.AuthView.as_view(), name="auth"),
@@ -7,4 +7,6 @@ urlpatterns = [
     path("auth/password/", user_views.PasswordPatchView.as_view(), name="password_patch"),
     path("canva/create/", canva_views.CanvaCreateView.as_view(), name="canva_create"),
     path("canva/user/", canva_views.CanvaUserView.as_view(), name="canva_user"),
+    path("block/create/", block_views.BlockCreateView.as_view(), name="block_create"),
+    path("block/user/", block_views.BlockUserView.as_view(), name="block_user"),
 ]
