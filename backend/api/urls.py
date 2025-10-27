@@ -10,5 +10,5 @@ urlpatterns = [
     path("block/create/", block_views.BlockCreateView.as_view(), name="block_create"),
     path("block/user/", block_views.BlockUserView.as_view(), name="block_user"),
     path("collaboration/invitation/create/", collaboration_views.CollaborationInvitationCreateView.as_view(), name="collaboration_invitation_create"),
-    # path("collaboration/invitation/<uuid:id>/", collaboration_views.CollaborationInvitationView.as_view(), name="collaboration_invitation"),
+    path("collaboration/invitation/<uuid:id>/", collaboration_views.CollaborationInvitationView.as_view(), name="collaboration_invitation"),
 ]

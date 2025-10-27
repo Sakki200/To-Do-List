@@ -5,8 +5,8 @@ from ..models import CollaborationInvitation, Canva
 class CollaborationInvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollaborationInvitation
-        fields = ["uuid", "canva", "status", "created_at"]
-        read_only_fields = ["uuid", "canva", "created_at"]
+        fields = ["id", "canva", "status", "created_at"]
+        read_only_fields = ["id", "canva", "created_at"]
 
 
 class CollaborationInvitationCreateSerializer(serializers.ModelSerializer):
