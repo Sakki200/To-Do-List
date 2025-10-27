@@ -1,7 +1,6 @@
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.authentication import TokenAuthentication
 from django.shortcuts import get_object_or_404
 from ..serializers.canva_serializers import CanvaCreateSerializer, CanvaSerializer

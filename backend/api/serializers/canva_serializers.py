@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Canva, User
+from ..models import Canva
 
 
 class CanvaSerializer(serializers.ModelSerializer):
