@@ -4,9 +4,11 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from django.contrib.auth import authenticate
+from django.core.mail import send_mail
 from ..serializers.user_serializers import (
     UserUpdateSerializer,
     UserUpdatePasswordSerializer,
+    UserSerializer,
 )
 from ..models import User
 
@@ -41,12 +43,18 @@ class AuthView(APIView):
             )
 
         user = User.objects.create_user(email=email, password=password)
-        token, _ = Token.objects.get_or_create(user=user)
+
+        send_mail(
+            subject="To-Do List | Activate your account !",
+            message=f"Use this link to activate your account: http://localhost:8000/api/auth/validation/{user.id}/",
+            from_email="todo.list@djgango.com",
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+
         return Response(
             {
-                "message": "Account created.",
-                "user": UserSerializer(user).data,
-                "token": token.key,
+                "message": "Account created please check your verification email.",
             },
             status=status.HTTP_201_CREATED,
         )
@@ -57,12 +65,20 @@ class ValidationActivateView(generics.UpdateAPIView):
     serializer_class = UserUpdateSerializer
     lookup_field = "id"
 
-    def update(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         user = self.get_object()
         user.is_validated = True
         user.save()
         serializer = self.get_serializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        token, _ = Token.objects.get_or_create(user=user)
+
+        return Response(
+            {
+                "message": "Account successfully activated.",
+                "token": token.key,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class PasswordPatchView(generics.UpdateAPIView):
@@ -77,7 +93,7 @@ class PasswordPatchView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         user = self.get_object()
         serializer = self.get_serializer(user, data=request.data, partial=True)
-                
+
         if serializer.is_valid():
             serializer.save()
             return Response(
