@@ -6,25 +6,28 @@ from django.shortcuts import get_object_or_404
 from ..serializers.canva_serializers import CanvaCreateSerializer, CanvaSerializer
 from ..models import Canva
 
+
 class CanvaCreateView(generics.CreateAPIView):
     queryset = Canva.objects.all()
     serializer_class = CanvaCreateSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
+
 class CanvaUserView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        user = request.user
         canva_id = request.data.get("id")
 
         if canva_id:
-            canva = get_object_or_404(Canva, id=canva_id, user=request.user)
+            canva = user.accessible_canva(canva_id)
             serializer = CanvaSerializer(canva)
             return Response(serializer.data)
         else:
-            canvas = Canva.objects.filter(user=request.user)
+            canvas = user.accessible_canva()
             serializer = CanvaSerializer(canvas, many=True)
             return Response(serializer.data)
 
@@ -48,4 +51,3 @@ class CanvaUserView(APIView):
         canva = get_object_or_404(Canva, id=canva_id, user=request.user)
         canva.delete()
         return Response(status=204)
-

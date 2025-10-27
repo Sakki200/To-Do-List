@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from typing import Optional
 import uuid
 
 
@@ -26,6 +27,18 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = []
+
+    def accessible_canva(self, id: Optional[uuid.UUID] = None):
+        from .models import Canva
+    
+        owned = Canva.objects.filter(user=self)
+        shared = Canva.objects.filter(collaborationInvitations__collaborations__user=self)
+        accessibles = (owned | shared).distinct()
+
+        if id is not None:
+            return accessibles.filter(id=id).first()
+
+        return accessibles
 
     class Meta:
         db_table = "user"
@@ -85,7 +98,6 @@ class Task(models.Model):
 
 class CollaborationInvitation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     canva = models.ForeignKey(
         Canva, on_delete=models.CASCADE, related_name="collaborationInvitations"
     )
