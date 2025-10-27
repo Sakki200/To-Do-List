@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from .task_serializers import TaskSerializer, TaskCreateSerializer
 from ..models import Block
 
 
@@ -7,6 +8,7 @@ class BlockSerializer(serializers.ModelSerializer):
         model = Block
         depth = 1
         fields = [
+            "id",
             "name",
             "position_x",
             "position_y",
@@ -16,7 +18,7 @@ class BlockSerializer(serializers.ModelSerializer):
             "updated_at",
             "tasks",
         ]
-        read_only_fields = ["created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at"]
 
 
 class BlockCreateSerializer(serializers.ModelSerializer):

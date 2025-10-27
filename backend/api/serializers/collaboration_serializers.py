@@ -4,13 +4,6 @@ from ..models import Collaboration, Canva
 
 
 class CollaborationSerializer(serializers.ModelSerializer):
-    canva = serializers.PrimaryKeyRelatedField(
-        queryset=Canva.objects.all(), read_only=True
-    )
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), read_only=True
-    )
-
     class Meta:
         model = Collaboration
         fields = ["canva", "user", "created_at", "updated_at"]

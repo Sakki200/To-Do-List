@@ -3,9 +3,6 @@ from ..models import CollaborationInvitation, Canva
 
 
 class CollaborationInvitationSerializer(serializers.ModelSerializer):
-    canva = serializers.PrimaryKeyRelatedField(
-        queryset=Canva.objects.all(), read_only=True
-    )
     class Meta:
         model = CollaborationInvitation
         fields = ["uuid", "canva", "status", "created_at"]

@@ -1,24 +1,19 @@
 from rest_framework import serializers
-from ..models import Task, Block
+from ..models import Task
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    block = serializers.PrimaryKeyRelatedField(
-        queryset=Block.objects.all(), read_only=True
-    )
-
     class Meta:
         model = Task
-        depth = 1
         fields = [
-            "block",
+            "id",
             "description",
             "position",
             "is_checked",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["block", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at"]
 
 
 class TaskCreateSerializer(serializers.ModelSerializer):
@@ -33,4 +28,4 @@ class TaskCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ["block", "description", "position"]
+        fields = ["id", "description", "position"]
