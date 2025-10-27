@@ -33,7 +33,12 @@ class CollaborationInvitationCreateView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         invitation = serializer.save()
 
-        return Response(self.get_serializer(invitation).data, status=201)
+        return Response(
+            {
+                "invitation_link": f"http://{request.get_host()}/api/collaboration/invitation/{invitation.id}/"
+            },
+            status=201,
+        )
 
 
 class CollaborationInvitationView(generics.CreateAPIView):
@@ -45,9 +50,7 @@ class CollaborationInvitationView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         collaboration_invitation = get_object_or_404(
-            CollaborationInvitation,
-            id=self.kwargs[self.lookup_field],
-            canva=request.data.get("canva_id"),
+            CollaborationInvitation, id=self.kwargs[self.lookup_field]
         )
         canva = get_object_or_404(Canva, id=collaboration_invitation.canva.id)
 
