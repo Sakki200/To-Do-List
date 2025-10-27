@@ -22,13 +22,14 @@ class BlockUserView(APIView):
     def get(self, request):
         canva_id = request.data.get("canva_id")
         block_id = request.data.get("block_id")
+        user = request.user
 
         if not canva_id:
             return Response(
                 {"detail": "canva_id is required."},
                 status=400,
             )
-        canva = get_object_or_404(Canva, id=canva_id, user=request.user)
+        canva = user.accessible_canva(canva_id)
 
         if canva_id and not block_id:
             blocks = Block.objects.filter(canva=canva)
@@ -42,6 +43,7 @@ class BlockUserView(APIView):
     def patch(self, request):
         canva_id = request.data.get("canva_id")
         block_id = request.data.get("block_id")
+        user = request.user
 
         if not canva_id or not block_id:
             return Response(
@@ -49,7 +51,7 @@ class BlockUserView(APIView):
                 status=400,
             )
 
-        canva = get_object_or_404(Canva, id=canva_id, user=request.user)
+        canva = user.accessible_canva(canva_id)
         block = get_object_or_404(Block, id=block_id, canva=canva)
         tasks_data = request.data.get("tasks", [])
         serializer = BlockSerializer(block, data=request.data, partial=True)
@@ -69,15 +71,18 @@ class BlockUserView(APIView):
             if task_id and task_id in existing_task_ids:
 
                 task_instance = Task.objects.get(id=task_id, block=block)
-                task_serializer = TaskSerializer(task_instance, data=task_data, partial=True)
+                task_serializer = TaskSerializer(
+                    task_instance, data=task_data, partial=True
+                )
                 task_serializer.is_valid(raise_exception=True)
                 task_serializer.save()
             else:
 
-                create_serializer = TaskCreateSerializer(data=task_data, context={"block": block})
+                create_serializer = TaskCreateSerializer(
+                    data=task_data, context={"block": block}
+                )
                 create_serializer.is_valid(raise_exception=True)
                 create_serializer.save()
-
 
         updated_block = Block.objects.get(id=block.id)
         output_serializer = BlockSerializer(updated_block)
@@ -86,6 +91,7 @@ class BlockUserView(APIView):
     def delete(self, request):
         canva_id = request.data.get("canva_id")
         block_id = request.data.get("block_id")
+        user = request.user
 
         if not canva_id or not block_id:
             return Response(
@@ -93,7 +99,7 @@ class BlockUserView(APIView):
                 status=400,
             )
 
-        canva = get_object_or_404(Canva, id=canva_id, user=request.user)
+        canva = user.accessible_canva(canva_id)
         block = get_object_or_404(Block, id=block_id, canva=canva)
         block.delete()
         return Response(status=204)

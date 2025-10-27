@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from typing import Optional
 import uuid
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
@@ -25,6 +27,18 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = []
+
+    def accessible_canva(self, id: Optional[uuid.UUID] = None):
+        from .models import Canva
+    
+        owned = Canva.objects.filter(user=self)
+        shared = Canva.objects.filter(collaborationInvitations__collaborations__user=self)
+        accessibles = (owned | shared).distinct()
+
+        if id is not None:
+            return accessibles.filter(id=id).first()
+
+        return accessibles
 
     class Meta:
         db_table = "user"
@@ -81,23 +95,21 @@ class Task(models.Model):
         verbose_name = "Task"
         verbose_name_plural = "Tasks"
 
-class Collaboration(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    canva = models.ForeignKey(Canva, on_delete=models.CASCADE, related_name="collaborators")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="collaborations")
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-
-    class Meta:
-        db_table = "collaboration"
-        ordering = ["-canva__updated_at", "-created_at"]
-        verbose_name = "Collaboration"
-        verbose_name_plural = "Collaborations"
 
 class CollaborationInvitation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    canva = models.ForeignKey(Canva, on_delete=models.CASCADE, related_name="collaborationInvitations")
-    status = models.CharField(max_length=25, choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('declined', 'Declined')], default='pending')
+    canva = models.ForeignKey(
+        Canva, on_delete=models.CASCADE, related_name="collaborationInvitations"
+    )
+    status = models.CharField(
+        max_length=25,
+        choices=[
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("declined", "Declined"),
+        ],
+        default="pending",
+    )
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
@@ -105,3 +117,20 @@ class CollaborationInvitation(models.Model):
         ordering = ["-created_at"]
         verbose_name = "Collaboration Invitation"
         verbose_name_plural = "Collaboration Invitations"
+
+
+class Collaboration(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    collaboration_invitation = models.OneToOneField(
+        CollaborationInvitation, on_delete=models.CASCADE, related_name="collaborations", null=False, blank=False
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="collaborations"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+
+    class Meta:
+        db_table = "collaboration"
+        ordering = ["-collaboration_invitation__canva__updated_at", "-created_at"]
+        verbose_name = "Collaboration"
+        verbose_name_plural = "Collaborations"
