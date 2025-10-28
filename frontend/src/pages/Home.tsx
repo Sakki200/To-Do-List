@@ -30,7 +30,7 @@ export default function Home() {
           </div>
           <div className="flex-none">
             <Link
-              to="/connexion"
+              to="/connection"
               className="btn btn-secondary btn-outline text-xl"
             >
               Connexion
@@ -53,10 +53,10 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link to="/connexion" className="btn btn-primary btn-lg">
+              <Link to="/connection" className="btn btn-primary btn-lg">
                 Commencer maintenant
               </Link>
-              <Link to="/connexion" className="btn btn-outline btn-lg">
+              <Link to="/connection" className="btn btn-outline btn-lg">
                 Déjà un compte ? Se connecter
               </Link>
             </div>

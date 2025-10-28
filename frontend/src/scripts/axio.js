@@ -2,7 +2,7 @@ import axios from "axios";
 import cookie from "js-cookie";
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.PUBLIC_URL_API,
+  baseURL: import.meta.env.VITE_URL_API,
   withCredentials: true,
 });
 

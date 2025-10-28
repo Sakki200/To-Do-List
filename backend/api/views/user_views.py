@@ -48,6 +48,12 @@ class AuthView(APIView):
         user = authenticate(request, username=email, password=password)
 
         if user:
+            user = User.objects.get(email=email)
+            if not user.is_validated:
+                return Response(
+                    {"error": "Account not validated. Please check your email."},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
             token, _ = Token.objects.get_or_create(user=user)
             return Response(
                 {
@@ -67,7 +73,7 @@ class AuthView(APIView):
 
         send_mail(
             subject="To-Do List | Activate your account !",
-            message=f"Use this link to activate your account: http://localhost:8000/api/auth/validation/{user.id}/",
+            message=f"Use this link to activate your account: http://localhost:5173/validation&id={user.id}/",
             from_email="todo.list@djgango.com",
             recipient_list=[user.email],
             fail_silently=False,
