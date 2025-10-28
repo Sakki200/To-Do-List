@@ -11,6 +11,7 @@ export default function Lists() {
   const [show, setShow] = useState<boolean>(false);
   const [name, setName] = useState<null | string>(null);
   const [collaborative, setCollaborative] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
   async function fetchLists() {
@@ -59,6 +60,7 @@ export default function Lists() {
     <>
       <div className="min-h-screen bg-base-200 flex flex-col">
         <Header title={"Dashboard"} />
+          {message && <p className="flex justify-center w-full text-white text-lg font-semibold alert alert-success rounded-none">{message}</p>}
         <main className="justify-center items-center text-center px-6 relative overflow-hidden ">
           <div className="min-h-screen bg-base-200">
             <div className="flex flex-col md:flex-row justify-start items-center gap-8 px-16 py-8 ">
@@ -74,7 +76,7 @@ export default function Lists() {
             </div>
             <div className="flex justify-center lg:justify-start flex-wrap gap-6 px-16">
               {canvas.map((canva: any) => (
-                <CanvaCard key={canva.id} canva={canva} />
+                <CanvaCard key={canva.id} canva={canva} notify={setMessage} />
               ))}
             </div>
           </div>
