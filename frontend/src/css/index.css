@@ -1,0 +1,25 @@
+@import "tailwindcss";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+*,
+::before,
+::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%; /* 62.5 * 16/100 = 10px */
+}
+
+body {
+  margin: 0;
+  /* overflow: hidden;  */
+}
+
+.none {
+  display: none;
+}
