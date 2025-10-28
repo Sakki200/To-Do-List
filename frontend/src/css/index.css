@@ -1,28 +1,8 @@
 @import "tailwindcss";
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
 @plugin "daisyui" {
   themes: winter;
 }
-
-*,
-::before,
-::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@utility btn{
+    @apply rounded-2xl p-4
 }
 
-html {
-  font-size: 62.5%; /* 62.5 * 16/100 = 10px */
-}
-
-body {
-  margin: 0;
-  /* overflow: hidden;  */
-}
-
-.none {
-  display: none;
-}
