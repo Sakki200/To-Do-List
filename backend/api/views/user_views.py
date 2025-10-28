@@ -73,7 +73,7 @@ class AuthView(APIView):
 
         send_mail(
             subject="To-Do List | Activate your account !",
-            message=f"Use this link to activate your account: http://localhost:5173/validation&id={user.id}/",
+            message=f"Use this link to activate your account: http://localhost:5173/validation?id={user.id}/",
             from_email="todo.list@djgango.com",
             recipient_list=[user.email],
             fail_silently=False,

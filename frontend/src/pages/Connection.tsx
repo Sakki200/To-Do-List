@@ -12,7 +12,7 @@ export default function Connection() {
 
   async function isConnected() {
     try {
-      const response = await apiClient.get("/auth");
+      const response = await apiClient.get("auth/");
       if (response.data && response.data.token) {
         navigate("/lists");
       }
