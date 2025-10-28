@@ -2,6 +2,9 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@plugin "daisyui" {
+  themes: winter;
+}
 
 *,
 ::before,
