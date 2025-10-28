@@ -35,7 +35,7 @@ class CollaborationInvitationCreateView(generics.CreateAPIView):
 
         return Response(
             {
-                "invitation_link": f"http://{request.get_host()}/api/collaboration/invitation/{invitation.id}/"
+                "invitation_link": f"http://localhost:5173/invitation?id={invitation.id}/"
             },
             status=201,
         )
