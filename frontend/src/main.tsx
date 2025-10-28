@@ -15,7 +15,7 @@ const router = createBrowserRouter([
   { path: "/validation", element: <Validation /> },
   { path: "/invitation", element: <Invitation /> },
   { path: "/lists", element: <Lists /> },
-  { path: "/lists/:id", element: <Canva /> },
+  { path: "/lists/:uuid", element: <Canva /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(

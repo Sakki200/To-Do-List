@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import CollaborationInvitation, Canva
+from ..models import CollaborationInvitation
 
 
 class CollaborationInvitationSerializer(serializers.ModelSerializer):

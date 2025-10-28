@@ -40,7 +40,7 @@ export default function Header({ title }: HeaderProps) {
                 <img src="/logo.svg" alt="logo" className="w-16 ml-4" />
               </Link>
             </div>
-            <div className=" text-2xl font-bold">
+            <div className="text-xl md:text-4xl font-bold">
               <p>{title}</p>
             </div>
           </div>
