@@ -9,10 +9,9 @@ export default function Validation() {
     try {
       const response = await apiClient.get("auth/");
       if (response.data && response.data.token) {
-        navigate("/lists");
       }
     } catch (error) {
-      // Not connected
+      navigate("/connection");
     }
   }
 
@@ -20,14 +19,11 @@ export default function Validation() {
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get("id");
     try {
-      const response = await apiClient.get("auth/validation/" + id);
-      console.log(response);
-
-      if (response.data.token) {
-        cookie.set("token", response.data.token, { path: "/" });
-        navigate("/lists");
-      }
-    } catch (error: any) {}
+      await apiClient.post("collaboration/invitation/" + id);
+      navigate("/lists");
+    } catch (error: any) {
+      navigate("/");
+    }
   }
 
   isConnected();
