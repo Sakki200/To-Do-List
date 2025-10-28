@@ -2,8 +2,8 @@ import axios from "axios";
 import cookie from "js-cookie";
 
 const apiClient = axios.create({
-  baseURL: process.env.PUBLIC_URL_API,
-  withCredentials: true, 
+  baseURL: import.meta.env.PUBLIC_URL_API,
+  withCredentials: true,
 });
 
 apiClient.interceptors.request.use((config) => {

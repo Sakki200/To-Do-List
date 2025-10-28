@@ -14,6 +14,27 @@ from ..models import User
 
 
 class AuthView(APIView):
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request):
+        user = request.user
+
+        if user and user.is_authenticated:
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response(
+                {
+                    "message": "User is authenticated.",
+                    "user": UserSerializer(user).data,
+                    "token": token.key,
+                },
+                status=200,
+            )
+
+        return Response(
+            {"error": "User is not authenticated."},
+            status=401,
+        )
+
     def post(self, request):
 
         email = request.data.get("email")
