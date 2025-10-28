@@ -20,7 +20,7 @@ class CanvaUserView(APIView):
 
     def get(self, request):
         user = request.user
-        canva_id = request.data.get("id")
+        canva_id = request.query_params.get("id")
 
         if canva_id:
             canva = user.accessible_canva(canva_id)

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import CanvaCard from "../components/CanvaCard";
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import apiClient from "../scripts/axio";
 import cookie from "js-cookie";
 

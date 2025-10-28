@@ -20,8 +20,8 @@ class BlockUserView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        canva_id = request.data.get("canva_id")
-        block_id = request.data.get("block_id")
+        canva_id = request.query_params.get("canva_id")
+        block_id = request.query_params.get("block_id")
         user = request.user
 
         if not canva_id:
