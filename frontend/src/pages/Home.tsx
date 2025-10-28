@@ -23,9 +23,9 @@ export default function Home() {
           <div className="flex-1">
             <Link
               to="/"
-              className="normal-case text-4xl font-extrabold text-primary m-4"
+              className="normal-case text-4xl font-extrabold text-primary "
             >
-              To-Do List
+              <img src="/logo.svg" alt="logo" className="w-16 ml-4" />
             </Link>
           </div>
           <div className="flex-none">
